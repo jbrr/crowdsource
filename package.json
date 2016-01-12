@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/jbrr/crowdsource/issues"
   },
-  "homepage": "https://github.com/jbrr/crowdsource#readme"
+  "homepage": "https://github.com/jbrr/crowdsource#readme",
+  "devDependencies": {
+    "mocha": "^2.3.4"
+  },
+  "dependencies": {
+    "express": "^4.13.3"
+  }
 }
