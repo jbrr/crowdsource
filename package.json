@@ -1,0 +1,19 @@
+{
+  "name": "crowdsource",
+  "version": "1.0.0",
+  "description": "Real time polling app",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jbrr/crowdsource.git"
+  },
+  "author": "Jeff Ruane",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jbrr/crowdsource/issues"
+  },
+  "homepage": "https://github.com/jbrr/crowdsource#readme"
+}
