@@ -4,6 +4,7 @@
   "description": "Real time polling app",
   "main": "index.js",
   "scripts": {
+    "start": "./node_modules/nodemon/bin/nodemon.js index.js",
     "test": "mocha"
   },
   "repository": {
@@ -17,9 +18,11 @@
   },
   "homepage": "https://github.com/jbrr/crowdsource#readme",
   "devDependencies": {
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "nodemon": "^1.8.1"
   },
   "dependencies": {
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "jquery": "^2.2.0"
   }
 }
