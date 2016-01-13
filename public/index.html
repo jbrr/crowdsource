@@ -1,1 +1,22 @@
-<h1>Hi Regis and Rose</h1>
+<!doctype html>
+<html>
+  <head>
+    <title>Crowdsource</title>
+  </head>
+  <body>
+    <h1>Welcome to Crowdsource</h1>
+
+    <form id="new-poll">
+      <input type="text" placeholder="Poll Title" class="poll-title"><br>
+      <div id="dynamicInput">
+        <input type="text" placeholder="Response 1" class="poll-response">
+      </div><br>
+      <input type="button" value="Add a new poll option" onClick="addInput('dynamicInput')">
+      <input type="submit" class="submit-new-poll">
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/client.js"></script>
+    <script src="/jquery.js"></script>
+  </body>
+</html>
