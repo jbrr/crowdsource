@@ -1,5 +1,5 @@
 var io = io();
-var inputCounter = 1;
+var inputCounter = 2;
 var inputLimit = 10;
 
 function addInput(elementName) {
