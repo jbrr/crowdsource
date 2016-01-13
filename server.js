@@ -15,9 +15,9 @@ app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-app.post('/', function(req, res) {
-  console.log(req.body, req.params);
-  res.send(req.body);
+app.post('/poll', function(req, res) {
+  poll = req.body;
+  res.sendFile(path.join(__dirname, 'public/poll-creation.html'));
 })
 
 app.get('/admin/:id', function(req, res) {
@@ -31,12 +31,7 @@ const server = http.createServer(app).listen(port, function () {
 const io = socketIo(server);
 
 io.on('connection', function(socket) {
-  socket.on('message', function(channel, message) {
-    if (channel === "pollOptions") {
-      poll[socket.id] = message;
-      console.log(message);
-    }
-  });
+  socket.emit('links', poll)
 });
 
 module.exports = server;

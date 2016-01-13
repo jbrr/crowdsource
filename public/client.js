@@ -1,6 +1,7 @@
 var socket = io();
 var inputCounter = 2;
 var inputLimit = 10;
+var pollLinks = document.getElementById('poll-links');
 
 function addInput(elementName) {
   if (inputCounter === inputLimit) {
@@ -12,3 +13,8 @@ function addInput(elementName) {
     document.getElementById(elementName).appendChild(newInput);
   }
 }
+
+socket.on('links', function(obj) {
+  console.log(obj);
+  pollLinks.innerText = obj['poll']['title'];
+});
