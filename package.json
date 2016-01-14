@@ -2,8 +2,9 @@
   "name": "crowdsource",
   "version": "1.0.0",
   "description": "Real time polling app",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "start": "./node_modules/nodemon/bin/nodemon.js server.js",
     "test": "mocha"
   },
   "repository": {
@@ -15,5 +16,17 @@
   "bugs": {
     "url": "https://github.com/jbrr/crowdsource/issues"
   },
-  "homepage": "https://github.com/jbrr/crowdsource#readme"
+  "homepage": "https://github.com/jbrr/crowdsource#readme",
+  "devDependencies": {
+    "mocha": "^2.3.4",
+    "nodemon": "^1.8.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "ejs": "^2.3.4",
+    "express": "^4.13.3",
+    "jquery": "^2.2.0",
+    "lodash": "^4.0.0",
+    "socket.io": "^1.4.4"
+  }
 }

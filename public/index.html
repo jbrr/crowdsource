@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Crowdsource</title>
+  </head>
+  <body>
+    <h1>Welcome to Crowdsource</h1>
+
+    <form id="new-poll" method="post" action="/poll">
+      <div id="dynamic-input">
+        <div>
+          <input type="text" placeholder="Poll Title" name="poll[title]">
+        </div>
+        <div>
+          <input type="text" placeholder="Response 1" class="poll-response" name="poll[responses][]">
+        </div>
+        <div>
+          <input type="text" placeholder="Response 2" class="poll-response" name="poll[responses][]">
+        </div>
+      </div><br>
+      <input type="button" value="Add a new poll option" onClick="addInput('dynamic-input')">
+      <input type="submit" id="submit-new-poll">
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/client.js"></script>
+    <script src="/jquery.js"></script>
+  </body>
+</html>
