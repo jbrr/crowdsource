@@ -17,7 +17,7 @@ app.get('/', function(req, res) {
 });
 
 app.post('/poll', function(req, res) {
-  poll = req.body.poll;
+  var poll = req.body.poll;
   urlHash(poll);
   var id = poll.id;
   polls[id] = poll;
@@ -26,8 +26,8 @@ app.post('/poll', function(req, res) {
 
 app.get('/poll/:id', function(req, res) {
     var poll = polls[req.params.id];
-    res.send(poll.title);
-})
+    res.send(poll.title + " - " + poll.responses);
+});
 
 app.get('/:adminUrl/:id', function(req, res) {
   res.sendFile(path.join(__dirname, 'public/admin.html'));
@@ -44,7 +44,7 @@ const io = socketIo(server);
 // });
 
 function urlHash(poll) {
-  poll.id = crypto.createHash('md5').update(poll.title + Date.now()).digest('bin');
+  poll.id = crypto.createHash('md5').update(poll.title + Date.now()).digest('hex');
   poll.adminUrl = crypto.createHash('md5').update(poll.responses[0] + Date.now()).digest('hex');
   return poll;
 }
