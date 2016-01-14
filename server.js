@@ -18,10 +18,10 @@ app.get('/', function(req, res) {
 
 app.post('/poll', function(req, res) {
   poll = req.body.poll;
-  var adminUrl = crypto.createHash('md5').update(poll.title + Date.now()).digest('hex');
-  var pollUrl = crypto.createHash('md5').update(poll.responses[0] + Date.now()).digest('hex');
-  console.log(req.body.title);
-  res.send("<div><a href=>'/" + adminUrl + "/" + pollUrl + "'>Admin URL</a><br><a href=>'/poll/" + pollUrl + "'>Poll URL</a>")
+  var adminUrl, pollUrl;
+  var urlHashes = urlHash(poll, adminUrl, pollUrl);
+
+  res.send("<div><a href='/" + urlHashes.adminUrl + "/" + urlHashes.pollUrl + "'>Admin URL</a><br><a href='/poll/" + urlHashes.pollUrl + "'>Poll URL</a>")
 });
 
 app.get('/admin/:id', function(req, res) {
@@ -37,5 +37,12 @@ const io = socketIo(server);
 io.on('connection', function(socket) {
   socket.emit('links', poll)
 });
+
+function urlHash(poll, adminUrl, pollUrl) {
+  adminUrl = crypto.createHash('md5').update(poll.title + Date.now()).digest('hex');
+  pollUrl = crypto.createHash('md5').update(poll.responses[0] + Date.now()).digest('hex');
+  return { adminUrl: adminUrl,
+           pollUrl: pollUrl};
+}
 
 module.exports = server;
