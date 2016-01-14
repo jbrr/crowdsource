@@ -12,6 +12,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 
+app.set('view engine', 'ejs');
+
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
@@ -26,7 +28,7 @@ app.post('/poll', function(req, res) {
 
 app.get('/poll/:id', function(req, res) {
     var poll = polls[req.params.id];
-    res.send(poll.title + " - " + poll.responses);
+    res.render('user-poll', {title: poll.title});
 });
 
 app.get('/:adminUrl/:id', function(req, res) {
