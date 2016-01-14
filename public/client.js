@@ -14,7 +14,7 @@ function addInput(elementName) {
   }
 }
 
-socket.on('links', function(obj) {
-  console.log(obj);
-  pollLinks.innerText = obj['poll']['title'];
-});
+// socket.on('links', function(obj) {
+//   console.log(obj);
+//   pollLinks.innerText = obj['poll']['title'];
+// });

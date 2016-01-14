@@ -5,7 +5,7 @@ const port = process.env.PORT || 3000;
 const path = require('path');
 const socketIo = require('socket.io');
 const crypto = require('crypto');
-var poll = {};
+var polls = {};
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,12 +19,14 @@ app.get('/', function(req, res) {
 app.post('/poll', function(req, res) {
   poll = req.body.poll;
   urlHash(poll);
-
-  res.send("<div><a href='/" + poll.adminUrl + "/" + poll.id + "'>Admin URL</a><br><a href='/poll/" + poll.id + "'>Poll URL</a>")
+  var id = poll.id;
+  polls[id] = poll;
+  res.send("<div><a href='/" + poll.adminUrl + "/" + poll.id + "'>Admin URL</a><br><a href='/poll/" + poll.id + "'>Poll URL</a></div>")
 });
 
 app.get('/poll/:id', function(req, res) {
-  res.send(req.params.id);
+    var poll = polls[req.params.id];
+    res.send(poll.title);
 })
 
 app.get('/:adminUrl/:id', function(req, res) {
@@ -37,12 +39,12 @@ const server = http.createServer(app).listen(port, function () {
 
 const io = socketIo(server);
 
-io.on('connection', function(socket) {
-  socket.emit('links', poll)
-});
+// io.on('connection', function(socket) {
+//   socket.emit('links', poll)
+// });
 
 function urlHash(poll) {
-  poll.id = crypto.createHash('md5').update(poll.title + Date.now()).digest('hex');
+  poll.id = crypto.createHash('md5').update(poll.title + Date.now()).digest('bin');
   poll.adminUrl = crypto.createHash('md5').update(poll.responses[0] + Date.now()).digest('hex');
   return poll;
 }
