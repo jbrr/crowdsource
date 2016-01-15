@@ -1,5 +1,5 @@
 <h2>Poll title: <%= poll.title %></h2>
 <h3>Poll Results:</h3>
 <% for (var i = 0; i < poll.responses.length; i++) { %>
-<p><%= poll.responses[i] %></p>
+<p id='response-<%= i %>'><%= poll.responses[i] %></p>
 <% } %>
