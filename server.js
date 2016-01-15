@@ -15,7 +15,7 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
+  res.sendFile(path.join(__dirname, 'views/index.html'));
 });
 
 app.post('/poll', function(req, res) {
@@ -28,11 +28,12 @@ app.post('/poll', function(req, res) {
 
 app.get('/poll/:id', function(req, res) {
     var poll = polls[req.params.id];
-    res.render('user-poll', {title: poll.title});
+    res.render('user-poll', {poll: poll});
 });
 
 app.get('/:adminUrl/:id', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public/admin.html'));
+  var poll = polls[req.params.id];
+  res.render('admin', {poll: poll});
 });
 
 const server = http.createServer(app).listen(port, function () {
