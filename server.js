@@ -28,12 +28,12 @@ app.post('/poll', function(req, res) {
 
 app.get('/poll/:id', function(req, res) {
     var poll = polls[req.params.id];
-    res.render('user-poll', {poll: poll});
+    res.sendFile(path.join(__dirname, 'views/user-poll.html'));
 });
 
 app.get('/:adminUrl/:id', function(req, res) {
   var poll = polls[req.params.id];
-  res.render('admin', {poll: poll});
+  res.send('admin', {poll: poll});
 });
 
 const server = http.createServer(app).listen(port, function () {
@@ -42,9 +42,10 @@ const server = http.createServer(app).listen(port, function () {
 
 const io = socketIo(server);
 
-// io.on('connection', function(socket) {
-//   socket.emit('links', poll)
-// });
+io.on('connection', function(socket) {
+  console.log("A user has connected");
+  socket.emit('voteCast', polls)
+});
 
 function urlHash(poll) {
   poll.id = crypto.createHash('md5').update(poll.title + Date.now()).digest('hex');

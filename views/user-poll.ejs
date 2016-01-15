@@ -5,9 +5,13 @@
   <body>
     <div>
       <h2>Poll title: <%= poll.title %></h2>
-      <% for (var i = 0; i < poll.responses.length; i++) { %>
-      <p id='response-<%= i %>'><%= poll.responses[i] %></p>
-      <% } %>
+      <div id="poll-options">
+        <% for (var i = 0; i < poll.responses.length; i++) { %>
+        <p id='response-<%= i %>'><%= poll.responses[i] %></p>
+        <% } %>
+      </div>
     </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/client.js"></script>
   </body>
 </html>

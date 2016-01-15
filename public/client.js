@@ -1,7 +1,7 @@
 var socket = io();
 var inputCounter = 2;
 var inputLimit = 10;
-var pollLinks = document.getElementById('poll-links');
+var pollOptions = document.getElementById('poll-options');
 
 function addInput(elementName) {
   if (inputCounter === inputLimit) {
@@ -14,7 +14,13 @@ function addInput(elementName) {
   }
 }
 
-// socket.on('links', function(obj) {
-//   console.log(obj);
-//   pollLinks.innerText = obj['poll']['title'];
-// });
+function getId(polls) {
+  return window.location.pathname.split('/')[2];
+}
+
+socket.on('voteCast', function(obj) {
+  console.log(obj);
+  var id = getId(obj);
+  var poll = obj[id];
+  pollOptions.innerText = poll.title + " - " + poll.responses;
+});
