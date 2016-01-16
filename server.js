@@ -23,17 +23,19 @@ app.post('/poll', function(req, res) {
   urlHash(poll);
   var id = poll.id;
   polls[id] = poll;
+  poll['votes'] = {};
+  console.log(poll);
   res.send("<div><a href='/" + poll.adminUrl + "/" + poll.id + "'>Admin URL</a><br><a href='/poll/" + poll.id + "'>Poll URL</a></div>")
 });
 
 app.get('/poll/:id', function(req, res) {
     var poll = polls[req.params.id];
-    res.sendFile(path.join(__dirname, 'views/user-poll.html'));
+    res.render('user-poll', { poll: poll });
 });
 
 app.get('/:adminUrl/:id', function(req, res) {
   var poll = polls[req.params.id];
-  res.send('admin', {poll: poll});
+  res.render('admin', { poll: poll });
 });
 
 const server = http.createServer(app).listen(port, function () {
@@ -44,7 +46,14 @@ const io = socketIo(server);
 
 io.on('connection', function(socket) {
   console.log("A user has connected");
-  socket.emit('voteCast', polls)
+  socket.on('message', function(channel, message) {
+    if (channel === 'voteCast' + message.id) {
+      var poll = polls[message.id];
+      poll['votes'] = message.vote;
+      console.log(poll);
+    }
+  });
+
 });
 
 function urlHash(poll) {

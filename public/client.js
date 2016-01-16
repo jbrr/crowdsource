@@ -1,7 +1,10 @@
 var socket = io();
 var inputCounter = 2;
 var inputLimit = 10;
+var pollTitle = document.getElementById('poll-title');
 var pollOptions = document.getElementById('poll-options');
+var buttons = document.querySelectorAll('#poll-options button');
+var pollId = window.location.pathname.split('/')[2];
 
 function addInput(elementName) {
   if (inputCounter === inputLimit) {
@@ -14,13 +17,28 @@ function addInput(elementName) {
   }
 }
 
-function getId(polls) {
-  return window.location.pathname.split('/')[2];
+for (var i = 0; i < buttons.length; i++) {
+  buttons[i].addEventListener('click', function() {
+    socket.send('voteCast' + pollId, { vote: this.innerText, id: pollId });
+  });
 }
 
-socket.on('voteCast', function(obj) {
-  console.log(obj);
-  var id = getId(obj);
-  var poll = obj[id];
-  pollOptions.innerText = poll.title + " - " + poll.responses;
-});
+// function getId(polls) {
+//   return window.location.pathname.split('/')[2];
+// }
+//
+// function parseResponses(responses) {
+//   for (var i = 0; i < responses.length; i++) {
+//     var newResponse = document.createElement('div');
+//     newResponse.innerHTML = `<p>${responses[i]}</p>`;
+//     pollOptions.appendChild(newResponse);
+//   }
+// }
+//
+// socket.on('voteCast', function(obj) {
+//   console.log(obj);
+//   var id = getId(obj);
+//   var poll = obj[id];
+//   pollTitle.innerHTML = "<h2>" + poll.title + "</h2>";
+//   parseResponses(poll.responses);
+// });
