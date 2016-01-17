@@ -38,7 +38,7 @@ function displayVotes(poll) {
   }
 }
 
-if(endButton) {
+if (endButton) {
   endButton.addEventListener('click', function() {
     socket.send('endPoll' + pollId, pollId);
   });

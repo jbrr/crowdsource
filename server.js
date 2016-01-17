@@ -20,10 +20,14 @@ app.get('/', function(req, res) {
 
 app.post('/poll', function(req, res) {
   var poll = req.body.poll;
+  var now = new Date();
   urlHash(poll);
   var id = poll.id;
   polls[id] = poll;
   poll['votes'] = {};
+  if (req.body.minutesToClose) {
+    calculateClosingTime(poll, now, req.body.minutesToClose);
+  }
   res.send("<div><a href='/" + poll.adminUrl + "/" + poll.id + "'>Admin URL</a><br><a href='/poll/" + poll.id + "'>Poll URL</a></div>")
 });
 
@@ -57,10 +61,14 @@ io.on('connection', function(socket) {
       tallyVotes(poll);
       io.sockets.emit('voteCount' + message.id, poll);
     } else if (channel === 'endPoll' + message) {
-      io.sockets.emit('pollOver' + message, polls[message]);
+      closePoll(message, channel);
     }
   });
 });
+
+function closePoll(id, channel) {
+  io.sockets.emit('pollOver' + id, polls[id]);
+}
 
 function urlHash(poll) {
   poll.id = crypto.createHash('md5').update(poll.title + Date.now()).digest('hex');
@@ -80,6 +88,14 @@ function tallyVotes(poll) {
       }
     }
   }
+}
+
+function calculateClosingTime(poll, date, minutes) {
+  var newDate = new Date(date.getTime() + minutes*60000);
+  var closingTime = newDate - date;
+  setTimeout(function() {
+    closePoll(poll.id, 'endPoll' + poll.id);
+  }, closingTime);
 }
 
 module.exports = server;
