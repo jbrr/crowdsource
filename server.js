@@ -61,12 +61,12 @@ io.on('connection', function(socket) {
       tallyVotes(poll);
       io.sockets.emit('voteCount' + message.id, poll);
     } else if (channel === 'endPoll' + message) {
-      closePoll(message, channel);
+      closePoll(message);
     }
   });
 });
 
-function closePoll(id, channel) {
+function closePoll(id) {
   io.sockets.emit('pollOver' + id, polls[id]);
 }
 
@@ -88,7 +88,7 @@ function calculateClosingTime(poll, date, minutes) {
   var newDate = new Date(date.getTime() + minutes*60000);
   var closingTime = newDate - date;
   setTimeout(function() {
-    closePoll(poll.id, 'endPoll' + poll.id);
+    closePoll(poll.id);
   }, closingTime);
 }
 
