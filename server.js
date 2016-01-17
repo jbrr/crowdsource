@@ -4,7 +4,7 @@ const http = require('http');
 const port = process.env.PORT || 3000;
 const path = require('path');
 const socketIo = require('socket.io');
-const crypto = require('crypto');
+const urlHash = require('./url-hash');
 var polls = {};
 
 const bodyParser = require('body-parser');
@@ -68,12 +68,6 @@ io.on('connection', function(socket) {
 
 function closePoll(id, channel) {
   io.sockets.emit('pollOver' + id, polls[id]);
-}
-
-function urlHash(poll) {
-  poll.id = crypto.createHash('md5').update(poll.title + Date.now()).digest('hex');
-  poll.adminUrl = crypto.createHash('md5').update(poll.responses[0] + Date.now()).digest('hex');
-  return poll;
 }
 
 function tallyVotes(poll) {
