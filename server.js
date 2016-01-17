@@ -29,6 +29,7 @@ app.post('/poll', function(req, res) {
 
 app.get('/poll/:id', function(req, res) {
     var poll = polls[req.params.id];
+    console.log(poll);
     res.render('user-poll', { poll: poll });
 });
 
