@@ -4,6 +4,7 @@ var inputLimit = 10;
 var pollTitle = document.getElementById('poll-title');
 var pollOptions = document.getElementById('poll-options');
 var buttons = document.querySelectorAll('#poll-options button');
+var pollResults = document.getElementById('poll-results')
 var pollId = window.location.pathname.split('/')[2];
 
 function addInput(elementName) {
@@ -23,22 +24,7 @@ for (var i = 0; i < buttons.length; i++) {
   });
 }
 
-// function getId(polls) {
-//   return window.location.pathname.split('/')[2];
-// }
-//
-// function parseResponses(responses) {
-//   for (var i = 0; i < responses.length; i++) {
-//     var newResponse = document.createElement('div');
-//     newResponse.innerHTML = `<p>${responses[i]}</p>`;
-//     pollOptions.appendChild(newResponse);
-//   }
-// }
-//
-// socket.on('voteCast', function(obj) {
-//   console.log(obj);
-//   var id = getId(obj);
-//   var poll = obj[id];
-//   pollTitle.innerHTML = "<h2>" + poll.title + "</h2>";
-//   parseResponses(poll.responses);
-// });
+socket.on('voteCount' + pollId, function(message) {
+  console.log(message);
+  pollResults.innerText = message.title;
+});

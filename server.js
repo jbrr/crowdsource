@@ -49,11 +49,10 @@ io.on('connection', function(socket) {
   socket.on('message', function(channel, message) {
     if (channel === 'voteCast' + message.id) {
       var poll = polls[message.id];
-      poll['votes'] = message.vote;
-      console.log(poll);
+      poll['votes'][socket.id] = message.vote;
+      io.sockets.emit('voteCount' + message.id, poll);
     }
   });
-
 });
 
 function urlHash(poll) {
