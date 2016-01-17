@@ -1,7 +1,12 @@
 var socket = io();
 var inputCounter = 2;
 var inputLimit = 10;
-var pollLinks = document.getElementById('poll-links');
+var pollTitle = document.getElementById('poll-title');
+var pollOptions = document.getElementById('poll-options');
+var buttons = document.querySelectorAll('#poll-options button');
+var pollResults = document.getElementById('poll-results')
+var pollId = window.location.pathname.split('/')[2];
+var voteTally = {};
 
 function addInput(elementName) {
   if (inputCounter === inputLimit) {
@@ -14,7 +19,22 @@ function addInput(elementName) {
   }
 }
 
-// socket.on('links', function(obj) {
-//   console.log(obj);
-//   pollLinks.innerText = obj['poll']['title'];
-// });
+for (var i = 0; i < buttons.length; i++) {
+  buttons[i].addEventListener('click', function() {
+    socket.send('voteCast' + pollId, { vote: this.innerText, id: pollId });
+  });
+}
+
+socket.on('voteCount' + pollId, function(message) {
+  displayVotes(message);
+  console.log(message);
+});
+
+function displayVotes(poll) {
+  pollResults.innerHTML = "";
+  for (key in poll.voteTally) {
+    var result = document.createElement('div');
+    result.innerHTML = `<p>${key} - ${poll.voteTally[key]}</p>`;
+    pollResults.appendChild(result);
+  }
+}

@@ -23,17 +23,22 @@ app.post('/poll', function(req, res) {
   urlHash(poll);
   var id = poll.id;
   polls[id] = poll;
+  poll['votes'] = {};
   res.send("<div><a href='/" + poll.adminUrl + "/" + poll.id + "'>Admin URL</a><br><a href='/poll/" + poll.id + "'>Poll URL</a></div>")
 });
 
 app.get('/poll/:id', function(req, res) {
     var poll = polls[req.params.id];
-    res.render('user-poll', {poll: poll});
+    res.render('user-poll', { poll: poll });
 });
 
 app.get('/:adminUrl/:id', function(req, res) {
   var poll = polls[req.params.id];
-  res.render('admin', {poll: poll});
+  if (poll.adminUrl === req.params.adminUrl) {
+    res.render('admin', { poll: poll });
+  } else {
+    res.send("404");
+  }
 });
 
 const server = http.createServer(app).listen(port, function () {
@@ -42,14 +47,36 @@ const server = http.createServer(app).listen(port, function () {
 
 const io = socketIo(server);
 
-// io.on('connection', function(socket) {
-//   socket.emit('links', poll)
-// });
+io.on('connection', function(socket) {
+  console.log("A user has connected");
+  socket.on('message', function(channel, message) {
+    if (channel === 'voteCast' + message.id) {
+      var poll = polls[message.id];
+      poll['votes'][socket.id] = message.vote;
+      tallyVotes(poll);
+      io.sockets.emit('voteCount' + message.id, poll);
+    }
+  });
+});
 
 function urlHash(poll) {
   poll.id = crypto.createHash('md5').update(poll.title + Date.now()).digest('hex');
   poll.adminUrl = crypto.createHash('md5').update(poll.responses[0] + Date.now()).digest('hex');
   return poll;
+}
+
+function tallyVotes(poll) {
+  poll['voteTally'] = {};
+  for (key in poll.votes) {
+    if (poll.votes.hasOwnProperty(key)) {
+      var value = poll.votes[key];
+      if (!poll['voteTally'][value]) {
+        poll['voteTally'][value] = 1;
+      } else {
+        poll['voteTally'][value] += 1;
+      }
+    }
+  }
 }
 
 module.exports = server;
