@@ -40,14 +40,14 @@ function displayVotes(poll) {
 
 if(endButton) {
   endButton.addEventListener('click', function() {
-    socket.send('endPoll' + pollId, poll);
+    socket.send('endPoll' + pollId, pollId);
   });
 }
 
 socket.on('pollOver' + pollId, function(message) {
-  pollOverDisplay.innerText = "Poll is now closed";
+  pollOverDisplay.innerHTML = "<b>Poll is now closed</b>";
   for (var i = 0; i < buttons.length; i++) {
-    buttons[i].hide();
+    buttons[i].style.display = 'none';
   }
 });
 
@@ -59,5 +59,4 @@ for (var i = 0; i < buttons.length; i++) {
 
 socket.on('voteCount' + pollId, function(message) {
   displayVotes(message);
-  console.log(message);
 });
