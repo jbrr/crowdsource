@@ -6,6 +6,7 @@ var pollOptions = document.getElementById('poll-options');
 var buttons = document.querySelectorAll('#poll-options button');
 var pollResults = document.getElementById('poll-results')
 var pollId = window.location.pathname.split('/')[2];
+var voteTally = {};
 
 function addInput(elementName) {
   if (inputCounter === inputLimit) {
@@ -25,6 +26,15 @@ for (var i = 0; i < buttons.length; i++) {
 }
 
 socket.on('voteCount' + pollId, function(message) {
+  displayVotes(message);
   console.log(message);
-  pollResults.innerText = message.title;
 });
+
+function displayVotes(poll) {
+  pollResults.innerHTML = "";
+  for (key in poll.voteTally) {
+    var result = document.createElement('div');
+    result.innerHTML = `<p>${key} - ${poll.voteTally[key]}</p>`;
+    pollResults.appendChild(result);
+  }
+}
