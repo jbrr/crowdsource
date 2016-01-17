@@ -25,7 +25,9 @@ app.post('/poll', function(req, res) {
   var id = poll.id;
   polls[id] = poll;
   poll['votes'] = {};
-  calculateClosingTime(poll, now, req.body.minutesToClose);
+  if (req.body.minutesToClose) {
+    calculateClosingTime(poll, now, req.body.minutesToClose);
+  }
   res.send("<div><a href='/" + poll.adminUrl + "/" + poll.id + "'>Admin URL</a><br><a href='/poll/" + poll.id + "'>Poll URL</a></div>")
 });
 
