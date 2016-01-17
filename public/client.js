@@ -10,7 +10,9 @@ var addOptions = document.getElementById('add-option');
 var dynamicInput = document.getElementById('dynamic-input');
 var voteTally = {};
 
-addOptions.addEventListener('click', addInput);
+if (addOptions) {
+  addOptions.addEventListener('click', addInput);
+}
 
 function addInput() {
   if (inputCounter === inputLimit) {
@@ -18,8 +20,19 @@ function addInput() {
   } else {
     inputCounter++;
     var newInput = document.createElement('div');
-    newInput.innerHTML = `<input type='text' placeholder='Response ${inputCounter}' class='poll-response' name="poll[responses][]" id='response-${inputCounter}'>`;
+    newInput.innerHTML = `<input type='text' placeholder='Response ${inputCounter}' class='poll-response' name="poll[responses]" id='response-${inputCounter}'>`;
     dynamicInput.appendChild(newInput);
+  }
+}
+
+function displayVotes(poll) {
+  if ((poll['user-results'] && (window.location.pathname.split('/')[1] === 'poll')) || window.location.pathname.split('/')[1] !== 'poll') {
+    pollResults.innerHTML = "";
+    for (key in poll.voteTally) {
+      var result = document.createElement('div');
+      result.innerHTML = `<p>${key} - ${poll.voteTally[key]}</p>`;
+      pollResults.appendChild(result);
+    }
   }
 }
 
@@ -33,12 +46,3 @@ socket.on('voteCount' + pollId, function(message) {
   displayVotes(message);
   console.log(message);
 });
-
-function displayVotes(poll) {
-  pollResults.innerHTML = "";
-  for (key in poll.voteTally) {
-    var result = document.createElement('div');
-    result.innerHTML = `<p>${key} - ${poll.voteTally[key]}</p>`;
-    pollResults.appendChild(result);
-  }
-}
