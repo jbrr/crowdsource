@@ -5,6 +5,7 @@
   <body>
     <div>
       <h2>Poll title: <%= poll.title %></h2>
+      <div id="poll-over"></div>
       <div id="poll-options">
         <% for (var i = 0; i < poll.responses.length; i++) { %>
         <button id='response-<%= i %>'><%= poll.responses[i] %></button>

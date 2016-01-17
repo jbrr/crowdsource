@@ -8,6 +8,8 @@ var pollResults = document.getElementById('poll-results')
 var pollId = window.location.pathname.split('/')[2];
 var addOptions = document.getElementById('add-option');
 var dynamicInput = document.getElementById('dynamic-input');
+var endButton = document.getElementById('ender');
+var pollOverDisplay = document.getElementById('poll-over');
 var voteTally = {};
 
 if (addOptions) {
@@ -35,6 +37,19 @@ function displayVotes(poll) {
     }
   }
 }
+
+if(endButton) {
+  endButton.addEventListener('click', function() {
+    socket.send('endPoll' + pollId, poll);
+  });
+}
+
+socket.on('pollOver' + pollId, function(message) {
+  pollOverDisplay.innerText = "Poll is now closed";
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].hide();
+  }
+});
 
 for (var i = 0; i < buttons.length; i++) {
   buttons[i].addEventListener('click', function() {

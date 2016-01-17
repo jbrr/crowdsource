@@ -56,6 +56,8 @@ io.on('connection', function(socket) {
       poll['votes'][socket.id] = message.vote;
       tallyVotes(poll);
       io.sockets.emit('voteCount' + message.id, poll);
+    } else if (channel === 'endPoll' + message.id) {
+      io.sockets.emit('pollOver' + message.id, poll);
     }
   });
 });
