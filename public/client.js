@@ -6,16 +6,20 @@ var pollOptions = document.getElementById('poll-options');
 var buttons = document.querySelectorAll('#poll-options button');
 var pollResults = document.getElementById('poll-results')
 var pollId = window.location.pathname.split('/')[2];
+var addOptions = document.getElementById('add-option');
+var dynamicInput = document.getElementById('dynamic-input');
 var voteTally = {};
 
-function addInput(elementName) {
+addOptions.addEventListener('click', addInput);
+
+function addInput() {
   if (inputCounter === inputLimit) {
     alert("You have reached the limit of adding " + inputCounter + " options.");
   } else {
     inputCounter++;
     var newInput = document.createElement('div');
     newInput.innerHTML = `<input type='text' placeholder='Response ${inputCounter}' class='poll-response' name="poll[responses][]" id='response-${inputCounter}'>`;
-    document.getElementById(elementName).appendChild(newInput);
+    dynamicInput.appendChild(newInput);
   }
 }
 
