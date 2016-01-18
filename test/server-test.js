@@ -71,5 +71,16 @@ describe('Server', function() {
         done();
       });
     });
+
+    it('should display links to admin and user polls', function(done) {
+      var payload = {poll: fixtures.validPoll};
+
+      this.request.post('/poll', {form: payload}, function(error, response) {
+        if (error) { done(error); }
+        assert(response.body.includes('Poll URL'));
+        assert(response.body.includes('Admin URL'));
+        done();
+      });
+    });
   });
 });

@@ -4,7 +4,7 @@ const http = require('http');
 const port = process.env.PORT || 3000;
 const path = require('path');
 const socketIo = require('socket.io');
-const urlHash = require('./url-hash');
+const urlHash = require('./lib/url-hash');
 
 app.locals.title = 'Crowdsource';
 app.locals.polls = {};
