@@ -7,6 +7,8 @@ const socketIo = require('socket.io');
 const urlHash = require('./url-hash');
 var polls = {};
 
+app.locals.title = 'Crowdsource';
+
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -96,4 +98,10 @@ function calculateClosingTime(poll, date, minutes) {
   }, closingTime);
 }
 
-module.exports = server;
+if (!module.parent) {
+  app.listen(app.get('port'), () => {
+    console.log(`${app.locals.title} is running on ${app.get('port')}.`);
+  });
+}
+
+module.exports = app;
