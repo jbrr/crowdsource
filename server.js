@@ -25,6 +25,7 @@ app.post('/poll', function(req, res) {
   var id = poll.id;
   polls[id] = poll;
   poll['votes'] = {};
+  poll['closed'] = false;
   if (req.body.minutesToClose) {
     calculateClosingTime(poll, now, req.body.minutesToClose);
   }
@@ -33,8 +34,11 @@ app.post('/poll', function(req, res) {
 
 app.get('/poll/:id', function(req, res) {
     var poll = polls[req.params.id];
-    console.log(poll);
-    res.render('user-poll', { poll: poll });
+    if (poll['closed'] === false) {
+      res.render('user-poll', { poll: poll });
+    } else {
+      res.send('404');
+    }
 });
 
 app.get('/:adminUrl/:id', function(req, res) {
@@ -67,6 +71,7 @@ io.on('connection', function(socket) {
 });
 
 function closePoll(id) {
+  polls[id]['closed'] = true;
   io.sockets.emit('pollOver' + id, polls[id]);
 }
 
