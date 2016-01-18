@@ -83,4 +83,86 @@ describe('Server', function() {
       });
     });
   });
+
+  describe('GET /poll/:id', function(done) {
+
+    beforeEach(function() {
+      app.locals.polls.testPoll = fixtures.validPoll;
+    });
+
+    it('should not return a 404', function(done) {
+      this.request.get('poll/testPoll', function(error, response) {
+        if (error) { done(error); }
+        assert.notEqual(response.statusCode, 404);
+        done();
+      });
+    });
+
+    it('should return a page that has the title of the poll', function(done) {
+      var poll = app.locals.polls.testPoll;
+
+      this.request.get('poll/testPoll', function(error, response) {
+        if (error) { done(error); }
+        assert(response.body.includes(poll.title), `"${response.body}" does not include "${poll.title}"`);
+        done();
+      });
+    });
+
+    it('should return a page with the poll responses', function(done) {
+      var poll = app.locals.polls.testPoll;
+
+      this.request.get('poll/testPoll', function(error, response) {
+        if (error) { done(error); }
+        assert(response.body.includes(poll.responses[0]),
+              `"${response.body}" does not include "${poll.responses[0]}"`);
+        done();
+      });
+    });
+  });
+
+  describe('GET /:adminUrl/:id', function(done) {
+
+    beforeEach(function() {
+      app.locals.polls.testPoll = fixtures.validPoll;
+    });
+
+    it('should not return a 404', function(done) {
+      this.request.get('/adminUrl/testPoll', function(error, response) {
+        if (error) { done(error); }
+        assert.notEqual(response.statusCode, 404);
+        done();
+      });
+    });
+
+    it('should return a page that has the title of the poll', function(done) {
+      var poll = app.locals.polls.testPoll;
+
+      this.request.get('adminUrl/testPoll', function(error, response) {
+        if (error) { done(error); }
+        assert(response.body.includes(poll.title), `"${response.body}" does not include "${poll.title}"`);
+        done();
+      });
+    });
+
+    it('should not return a page that has the title of the poll with wrong admin url', function(done) {
+      var poll = app.locals.polls.testPoll;
+
+      this.request.get('wrongAdminUrl/testPoll', function(error, response) {
+        if (error) { done(error); }
+        assert(response.body.includes(404), `"${response.body}" does not include 404`);
+        done();
+      });
+    });
+
+    it('should return a page with the poll responses', function(done) {
+      var poll = app.locals.polls.testPoll;
+
+      this.request.get('adminUrl/testPoll', function(error, response) {
+        if (error) { done(error); }
+        assert(response.body.includes(poll.responses[0]),
+              `"${response.body}" does not include "${poll.responses[0]}"`);
+        done();
+      });
+    });
+  });
 });

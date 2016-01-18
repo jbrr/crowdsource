@@ -6,6 +6,14 @@
     <div>
       <h2>Poll title: <%= poll.title %></h2>
       <div id="poll-over"></div>
+      <h3>Poll Options:</h3>
+      <div id="poll-options">
+        <ul>
+          <% for (var i = 0; i < poll.responses.length; i++) { %>
+          <li id='response-<%= i %>'><%= poll.responses[i] %></li>
+          <% } %>
+        </ul>
+      </div>
       <h3>Poll Results:</h3>
       <div id="poll-results"></div>
     </div>
