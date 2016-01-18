@@ -4,7 +4,7 @@ const http = require('http');
 const port = process.env.PORT || 3000;
 const path = require('path');
 const socketIo = require('socket.io');
-const crypto = require('crypto');
+const urlHash = require('./url-hash');
 var polls = {};
 
 const bodyParser = require('body-parser');
@@ -25,6 +25,7 @@ app.post('/poll', function(req, res) {
   var id = poll.id;
   polls[id] = poll;
   poll['votes'] = {};
+  poll['closed'] = false;
   if (req.body.minutesToClose) {
     calculateClosingTime(poll, now, req.body.minutesToClose);
   }
@@ -33,8 +34,11 @@ app.post('/poll', function(req, res) {
 
 app.get('/poll/:id', function(req, res) {
     var poll = polls[req.params.id];
-    console.log(poll);
-    res.render('user-poll', { poll: poll });
+    if (poll['closed'] === false) {
+      res.render('user-poll', { poll: poll });
+    } else {
+      res.send('404');
+    }
 });
 
 app.get('/:adminUrl/:id', function(req, res) {
@@ -61,19 +65,14 @@ io.on('connection', function(socket) {
       tallyVotes(poll);
       io.sockets.emit('voteCount' + message.id, poll);
     } else if (channel === 'endPoll' + message) {
-      closePoll(message, channel);
+      closePoll(message);
     }
   });
 });
 
-function closePoll(id, channel) {
+function closePoll(id) {
+  polls[id]['closed'] = true;
   io.sockets.emit('pollOver' + id, polls[id]);
-}
-
-function urlHash(poll) {
-  poll.id = crypto.createHash('md5').update(poll.title + Date.now()).digest('hex');
-  poll.adminUrl = crypto.createHash('md5').update(poll.responses[0] + Date.now()).digest('hex');
-  return poll;
 }
 
 function tallyVotes(poll) {
@@ -94,7 +93,7 @@ function calculateClosingTime(poll, date, minutes) {
   var newDate = new Date(date.getTime() + minutes*60000);
   var closingTime = newDate - date;
   setTimeout(function() {
-    closePoll(poll.id, 'endPoll' + poll.id);
+    closePoll(poll.id);
   }, closingTime);
 }
 
