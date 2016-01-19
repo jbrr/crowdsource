@@ -8,6 +8,7 @@ const urlHash = require('./lib/url-hash');
 const tallyVotes = require('./lib/tally-votes');
 const timeDifference = require('./lib/time-difference');
 
+app.locals.title = 'Crowdsource';
 app.locals.polls = {};
 
 const bodyParser = require('body-parser');
