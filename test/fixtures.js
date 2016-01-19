@@ -6,3 +6,10 @@ exports.validPoll = {
   votes: {},
   closed: false
 }
+
+exports.closedPoll = {
+  title: 'Closed Poll',
+  responses: ['option 1', 'option 2'],
+  id: 'closedPoll',
+  closed: true
+}

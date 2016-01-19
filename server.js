@@ -6,6 +6,7 @@ const path = require('path');
 const socketIo = require('socket.io');
 const urlHash = require('./lib/url-hash');
 const tallyVotes = require('./lib/tally-votes');
+const timeDifference = require('./lib/time-difference');
 
 app.locals.title = 'Crowdsource';
 app.locals.polls = {};
@@ -48,7 +49,7 @@ app.get('/:adminUrl/:id', function(req, res) {
   if (poll.adminUrl === req.params.adminUrl) {
     res.render('admin', { poll: poll });
   } else {
-    res.send("404");
+    res.send('404');
   }
 });
 
@@ -78,11 +79,9 @@ function closePoll(id) {
 }
 
 function calculateClosingTime(poll, date, minutes) {
-  var newDate = new Date(date.getTime() + minutes*60000);
-  var closingTime = newDate - date;
   setTimeout(function() {
     closePoll(poll.id);
-  }, closingTime);
+  }, timeDifference(date, minutes));
 }
 
 if (!module.parent) {
