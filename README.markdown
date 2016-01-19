@@ -6,10 +6,10 @@ Real time polling app built using Express, Node, and Socket.io. Production link 
 ##To Install
 1. Clone the repo
 2. `npm install`
+3. To run tests, `npm test`
 3. `npm start`
 4. Go to `localhost:3000`
 5. All done! Make some polls!
 
 ##To Do:
-* Automated testing, at least unit and controller tests, I'm not sure I'll be using integration testing for this project yet.
 * Styling, at least some basic CSS
