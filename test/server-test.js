@@ -88,6 +88,7 @@ describe('Server', function() {
 
     beforeEach(function() {
       app.locals.polls.testPoll = fixtures.validPoll;
+      app.locals.polls.closedPoll = fixtures.closedPoll;
     });
 
     it('should not return a 404', function(done) {
@@ -97,6 +98,16 @@ describe('Server', function() {
         done();
       });
     });
+
+    it('should return an error if the poll is closed', function(done) {
+      var poll = app.locals.polls.closedPoll;
+
+      this.request.get('poll/closedPoll', function(error, response) {
+        if (error) { done(error); }
+        assert(response.body.includes('404'), `"${response.body}" does not include 404`);
+        done();
+      })
+    })
 
     it('should return a page that has the title of the poll', function(done) {
       var poll = app.locals.polls.testPoll;
