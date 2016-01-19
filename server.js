@@ -5,6 +5,7 @@ const port = process.env.PORT || 3000;
 const path = require('path');
 const socketIo = require('socket.io');
 const urlHash = require('./lib/url-hash');
+const tallyVotes = require('./lib/tally-votes');
 
 app.locals.title = 'Crowdsource';
 app.locals.polls = {};
@@ -74,20 +75,6 @@ io.on('connection', function(socket) {
 function closePoll(id) {
   app.locals.polls[id]['closed'] = true;
   io.sockets.emit('pollOver' + id, app.locals.polls[id]);
-}
-
-function tallyVotes(poll) {
-  poll['voteTally'] = {};
-  for (key in poll.votes) {
-    if (poll.votes.hasOwnProperty(key)) {
-      var value = poll.votes[key];
-      if (!poll['voteTally'][value]) {
-        poll['voteTally'][value] = 1;
-      } else {
-        poll['voteTally'][value] += 1;
-      }
-    }
-  }
 }
 
 function calculateClosingTime(poll, date, minutes) {
