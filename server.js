@@ -4,8 +4,11 @@ const http = require('http');
 const port = process.env.PORT || 3000;
 const path = require('path');
 const socketIo = require('socket.io');
-const urlHash = require('./url-hash');
-var polls = {};
+const urlHash = require('./lib/url-hash');
+const tallyVotes = require('./lib/tally-votes');
+
+app.locals.title = 'Crowdsource';
+app.locals.polls = {};
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,20 +23,19 @@ app.get('/', function(req, res) {
 
 app.post('/poll', function(req, res) {
   var poll = req.body.poll;
-  var now = new Date();
   urlHash(poll);
   var id = poll.id;
-  polls[id] = poll;
+  app.locals.polls[id] = poll;
   poll['votes'] = {};
   poll['closed'] = false;
   if (req.body.minutesToClose) {
-    calculateClosingTime(poll, now, req.body.minutesToClose);
+    calculateClosingTime(poll, new Date(), req.body.minutesToClose);
   }
   res.send("<div><a href='/" + poll.adminUrl + "/" + poll.id + "'>Admin URL</a><br><a href='/poll/" + poll.id + "'>Poll URL</a></div>")
 });
 
 app.get('/poll/:id', function(req, res) {
-    var poll = polls[req.params.id];
+    var poll = app.locals.polls[req.params.id];
     if (poll['closed'] === false) {
       res.render('user-poll', { poll: poll });
     } else {
@@ -42,7 +44,7 @@ app.get('/poll/:id', function(req, res) {
 });
 
 app.get('/:adminUrl/:id', function(req, res) {
-  var poll = polls[req.params.id];
+  var poll = app.locals.polls[req.params.id];
   if (poll.adminUrl === req.params.adminUrl) {
     res.render('admin', { poll: poll });
   } else {
@@ -60,7 +62,7 @@ io.on('connection', function(socket) {
   console.log("A user has connected");
   socket.on('message', function(channel, message) {
     if (channel === 'voteCast' + message.id) {
-      var poll = polls[message.id];
+      var poll = app.locals.polls[message.id];
       poll['votes'][socket.id] = message.vote;
       tallyVotes(poll);
       io.sockets.emit('voteCount' + message.id, poll);
@@ -71,22 +73,8 @@ io.on('connection', function(socket) {
 });
 
 function closePoll(id) {
-  polls[id]['closed'] = true;
-  io.sockets.emit('pollOver' + id, polls[id]);
-}
-
-function tallyVotes(poll) {
-  poll['voteTally'] = {};
-  for (key in poll.votes) {
-    if (poll.votes.hasOwnProperty(key)) {
-      var value = poll.votes[key];
-      if (!poll['voteTally'][value]) {
-        poll['voteTally'][value] = 1;
-      } else {
-        poll['voteTally'][value] += 1;
-      }
-    }
-  }
+  app.locals.polls[id]['closed'] = true;
+  io.sockets.emit('pollOver' + id, app.locals.polls[id]);
 }
 
 function calculateClosingTime(poll, date, minutes) {
@@ -97,4 +85,10 @@ function calculateClosingTime(poll, date, minutes) {
   }, closingTime);
 }
 
-module.exports = server;
+if (!module.parent) {
+  app.listen(app.get('port'), function() {
+    console.log("We're really doing it!");
+  });
+}
+
+module.exports = app;
